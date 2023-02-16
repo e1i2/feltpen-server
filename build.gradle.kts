@@ -15,10 +15,26 @@ repositories {
     mavenCentral()
 }
 
+val kotestVersion: String = "5.5.5"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    runtimeOnly("com.github.jasync-sql:jasync-mysql:2.1.16")
+
+    testRuntimeOnly("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
