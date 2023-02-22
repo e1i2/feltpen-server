@@ -20,6 +20,7 @@ val kotestVersion: String = "5.5.5"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -29,7 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
 
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    runtimeOnly("com.github.jasync-sql:jasync-mysql:2.1.16")
+    runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.16")
 
     testRuntimeOnly("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
