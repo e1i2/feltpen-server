@@ -33,7 +33,7 @@ class UserService(
     }
 
     private suspend fun throwOnInvalidCode(email: String, code: String) {
-        val verificationCode = verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(code, email)
+        val verificationCode = verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(email, code)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code not found")
 
         if (verificationCode.isExpired()) {
