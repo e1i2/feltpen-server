@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService
 ) {
-    @PostMapping
+    @PostMapping("/verification-code")
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun createUser(@RequestBody @Valid request: CreateUserRequest) {
-        userService.signIn(request.email)
+    suspend fun sendVerificationCode(@RequestBody @Valid request: SendVerificationCodeRequest) {
+        userService.sendVerificationCode(request.email)
     }
 }
 
-data class CreateUserRequest(
+data class SendVerificationCodeRequest(
     @field:Email
     val email: String
 )
