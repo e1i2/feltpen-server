@@ -9,7 +9,7 @@ data class User(
     @Id
     val id: Long = 0,
     val email: String,
-    val name: String,
+    val name: String = email.substringBeforeLast("@"),
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val deletedAt: LocalDateTime? = null
 ) {
