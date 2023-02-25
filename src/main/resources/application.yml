@@ -29,3 +29,9 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui
+
+server:
+  port: 8080
+
+jwt:
+  secret: "tmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsad"
