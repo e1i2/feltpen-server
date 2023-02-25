@@ -40,8 +40,8 @@ class VerificationCodeRepositoryTest(
                 verificationCodeRepository.save(expiredVerificationCode)
 
                 val foundVerificationCode = verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(
-                    expiredVerificationCode.code,
                     expiredVerificationCode.email,
+                    expiredVerificationCode.code
                 )
 
                 foundVerificationCode shouldNotBe null

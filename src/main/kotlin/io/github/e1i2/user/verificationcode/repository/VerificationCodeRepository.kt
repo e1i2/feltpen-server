@@ -6,5 +6,5 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface VerificationCodeRepository: CoroutineCrudRepository<VerificationCode, String> {
     @Query("""SELECT * FROM verification_code WHERE code = :code AND email = :email""")
-    suspend fun findValidVerificationCodeByCodeAndEmail(code: String, email: String): VerificationCode?
+    suspend fun findValidVerificationCodeByCodeAndEmail(email: String, code: String): VerificationCode?
 }
