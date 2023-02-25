@@ -16,7 +16,7 @@ class UserController(
     private val userService: UserService
 ) {
     @PostMapping("/verification-code")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     suspend fun sendVerificationCode(@RequestBody @Valid request: SendVerificationCodeRequest) {
         userService.sendVerificationCode(request.email)
     }

@@ -24,7 +24,7 @@ class UserControllerTest(
             coEvery { userService.sendVerificationCode(any()) } coAnswers { buildUser() }
 
             sendRequest(buildSendVerificationCodeRequest())
-                .expectStatus().isCreated
+                .expectStatus().isAccepted
 
             coVerify(exactly = 1) { userService.sendVerificationCode(any()) }
         }
