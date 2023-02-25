@@ -34,4 +34,4 @@ server:
   port: 8080
 
 jwt:
-  secret: "tmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsad"
+  secretKey: "tmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsad"
