@@ -1,6 +1,7 @@
 package io.github.e1i2.user.controller
 
 import com.ninjasquad.springmockk.MockkBean
+import io.github.e1i2.global.security.SpringSecurityConfig
 import io.github.e1i2.user.TestUtils.buildUser
 import io.github.e1i2.user.service.UserService
 import io.kotest.core.spec.style.StringSpec
@@ -12,7 +13,7 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 
-@WebFluxTest(UserController::class)
+@WebFluxTest(UserController::class, SpringSecurityConfig::class)
 class UserControllerTest(
     private val webTestClient: WebTestClient,
     @MockkBean
