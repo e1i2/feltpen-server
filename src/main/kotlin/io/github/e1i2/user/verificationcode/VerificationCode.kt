@@ -9,8 +9,12 @@ import org.springframework.data.relational.core.mapping.Table
 data class VerificationCode(
     @Id
     val id: Long = 0,
-    val code: String = getRandomString(10),
+    val code: String = getRandomString(15),
     val email: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val expireAt: LocalDateTime = createdAt.plusMinutes(30)
-)
+) {
+    fun isExpired(): Boolean {
+        return expireAt.isBefore(LocalDateTime.now())
+    }
+}

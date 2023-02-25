@@ -1,8 +1,10 @@
 package io.github.e1i2.user.controller
 
+import io.github.e1i2.user.service.TokenDto
 import io.github.e1i2.user.service.UserService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,9 +22,22 @@ class UserController(
     suspend fun sendVerificationCode(@RequestBody @Valid request: SendVerificationCodeRequest) {
         userService.sendVerificationCode(request.email)
     }
+
+    @PostMapping("/signin")
+    @ResponseStatus(HttpStatus.CREATED)
+    suspend fun signIn(@RequestBody @Valid signInRequest: SignInRequest): TokenDto {
+        return userService.signIn(signInRequest.email, signInRequest.code)
+    }
 }
 
 data class SendVerificationCodeRequest(
     @field:Email
     val email: String
+)
+
+data class SignInRequest(
+    @field:Email
+    val email: String,
+    @field:NotBlank
+    val code: String
 )
