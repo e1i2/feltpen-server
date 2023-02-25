@@ -9,26 +9,16 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserService(
-    private val userRepository: UserRepository,
     private val verificationCodeRepository: VerificationCodeRepository,
     private val mailSender: MailSender
 ) {
-    suspend fun signIn(email: String) {
-        val user = userRepository.findByEmail(email) ?: saveNewUser(email)
-        val verificationCode = saveVerificationCode(user)
-        mailSender.sendEmailAsync("인증 코드", verificationCode.code, user.email)
+    suspend fun sendVerificationCode(email: String) {
+        val verificationCode = saveVerificationCode(email)
+        mailSender.sendEmailAsync("인증 코드", verificationCode.code, email)
     }
 
-    private suspend fun saveNewUser(email: String): User {
-        val newUser = User(
-            email = email
-        )
-
-        return userRepository.save(newUser)
-    }
-
-    private suspend fun saveVerificationCode(user: User): VerificationCode {
-        val verificationCode = VerificationCode(email = user.email)
+    private suspend fun saveVerificationCode(email: String): VerificationCode {
+        val verificationCode = VerificationCode(email = email)
         return verificationCodeRepository.save(verificationCode)
     }
 }
