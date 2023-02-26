@@ -20,7 +20,7 @@ class UserControllerTest(
     private val userService: UserService = mockk()
 ) : StringSpec() {
     init {
-        "요청에 문제가 없을 경우 201이 반환된다" {
+        "요청에 문제가 없을 경우 202가 반환된다" {
             coEvery { userService.sendVerificationCode(any()) } coAnswers { buildUser() }
 
             sendRequest(buildSendVerificationCodeRequest())
