@@ -1,7 +1,6 @@
 package io.github.e1i2.user.controller
 
 import com.ninjasquad.springmockk.MockkBean
-import io.github.e1i2.global.security.SpringSecurityConfig
 import io.github.e1i2.user.TestUtils.buildUser
 import io.github.e1i2.user.service.UserService
 import io.kotest.core.spec.style.StringSpec
@@ -10,10 +9,11 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 
-@WebFluxTest(UserController::class, SpringSecurityConfig::class)
+@WebFluxTest(UserController::class)
 class UserControllerTest(
     private val webTestClient: WebTestClient,
     @MockkBean
@@ -46,6 +46,7 @@ class UserControllerTest(
     private fun sendRequest(request: SendVerificationCodeRequest): ResponseSpec {
         return webTestClient
             .mutateWith(SecurityMockServerConfigurers.csrf())
+            .mutateWith(mockUser())
             .post()
             .uri("/users/verification-code")
             .bodyValue(request)
