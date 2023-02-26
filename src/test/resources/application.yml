@@ -6,3 +6,6 @@ spring:
   sql:
     init:
       mode: embedded
+
+jwt:
+  secretKey: "tmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsad"

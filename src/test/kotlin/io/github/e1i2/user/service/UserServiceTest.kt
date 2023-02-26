@@ -1,7 +1,7 @@
 package io.github.e1i2.user.service
 
 import com.ninjasquad.springmockk.MockkBean
-import io.github.e1i2.global.jwt.TokenGenerator
+import io.github.e1i2.global.security.jwt.TokenGenerator
 import io.github.e1i2.user.TestUtils.buildUser
 import io.github.e1i2.user.adapter.MailSender
 import io.github.e1i2.user.verificationcode.VerificationCode

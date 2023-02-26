@@ -1,11 +1,13 @@
 package io.github.e1i2.user.service
 
-import io.github.e1i2.global.jwt.TokenGenerator
+import io.github.e1i2.global.security.jwt.TokenGenerator
 import io.github.e1i2.user.adapter.MailSender
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.github.e1i2.user.verificationcode.repository.VerificationCodeRepository
 import java.time.LocalDateTime
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 

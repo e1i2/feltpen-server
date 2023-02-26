@@ -1,4 +1,4 @@
-package io.github.e1i2.global.jwt
+package io.github.e1i2.global.security.jwt
 
 import io.github.e1i2.utils.toDate
 import io.jsonwebtoken.Jwts
