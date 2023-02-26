@@ -14,19 +14,21 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import java.time.LocalDateTime
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
-@WebFluxTest(UserService::class)
 class UserServiceTest(
-    private val userService: UserService,
     @MockkBean
     private val verificationCodeRepository: VerificationCodeRepository = mockk(),
     @MockkBean
     private val mailSender: MailSender = mockk(),
     @MockkBean
-    private val tokenGenerator: TokenGenerator = mockk()
+    private val tokenGenerator: TokenGenerator = mockk(),
+    private val userService: UserService = UserService(
+        mailSender = mailSender,
+        tokenGenerator = tokenGenerator,
+        verificationCodeRepository = verificationCodeRepository
+    )
 ) : StringSpec() {
     private val user = buildUser()
 
@@ -50,7 +52,7 @@ class UserServiceTest(
             // given
             coEvery { tokenGenerator.generate(any(), any()) } coAnswers { "token" }
             coEvery {
-                verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(verificationCode.email, verificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCode(verificationCode.email, verificationCode.code)
             } coAnswers { verificationCode }
 
             // when
@@ -66,7 +68,7 @@ class UserServiceTest(
         "로그인 - 만료된 토큰 테스트" {
             // given
             coEvery {
-                verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(expiredVerificationCode.email, expiredVerificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCode(expiredVerificationCode.email, expiredVerificationCode.code)
             } coAnswers { expiredVerificationCode }
 
             // when
@@ -81,7 +83,7 @@ class UserServiceTest(
         "로그인 - 찾을 수 없는 토큰" {
             // given
             coEvery {
-                verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(any(), any())
+                verificationCodeRepository.findVerificationCodeByEmailAndCode(any(), any())
             } coAnswers { null }
 
             // when

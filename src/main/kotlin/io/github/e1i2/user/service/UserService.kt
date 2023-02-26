@@ -5,9 +5,7 @@ import io.github.e1i2.user.adapter.MailSender
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.github.e1i2.user.verificationcode.repository.VerificationCodeRepository
 import java.time.LocalDateTime
-import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
@@ -35,7 +33,7 @@ class UserService(
     }
 
     private suspend fun throwOnInvalidCode(email: String, code: String) {
-        val verificationCode = verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(email, code)
+        val verificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCode(email, code)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code not found")
 
         if (verificationCode.isExpired()) {

@@ -4,7 +4,6 @@ import io.github.e1i2.user.TestUtils.withTransactionRollback
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.LocalDateTime
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
@@ -39,7 +38,7 @@ class VerificationCodeRepositoryTest(
             withTransactionRollback(transactionalOperator) {
                 verificationCodeRepository.save(expiredVerificationCode)
 
-                val foundVerificationCode = verificationCodeRepository.findValidVerificationCodeByCodeAndEmail(
+                val foundVerificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCode(
                     expiredVerificationCode.email,
                     expiredVerificationCode.code
                 )
