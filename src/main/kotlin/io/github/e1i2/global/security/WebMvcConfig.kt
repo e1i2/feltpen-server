@@ -9,7 +9,7 @@ class WebMvcConfig : WebFluxConfigurer {
     override fun addCorsMappings(corsRegistry: CorsRegistry) {
         corsRegistry.addMapping("/**")
             .allowedMethods("*")
-            .allowedOriginPatterns("localhost:3000", "app.feltpen.site")
+            .allowedOriginPatterns("http://localhost:3000", "https://app.feltpen.site")
             .allowCredentials(true)
             .maxAge(3600)
     }
