@@ -50,6 +50,7 @@ class UserServiceTest(
 
         "로그인 테스트" {
             // given
+            coEvery { verificationCodeRepository.save(any()) } coAnswers { verificationCode }
             coEvery { tokenGenerator.generate(any(), any()) } coAnswers { "token" }
             coEvery {
                 verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(verificationCode.email, verificationCode.code)
@@ -60,6 +61,7 @@ class UserServiceTest(
 
             // then
             coVerify(exactly = 2) { tokenGenerator.generate(any(), any()) }
+            coVerify(exactly = 1) { verificationCodeRepository.save(any()) }
             tokenDto.accessToken shouldBe "token"
             tokenDto.refreshToken shouldBe "token"
             tokenDto.accessTokenExpireAt shouldBeAfter LocalDateTime.now()
