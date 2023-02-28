@@ -65,7 +65,7 @@ class UserServiceTest(
             tokenDto.accessTokenExpireAt shouldBeAfter LocalDateTime.now()
         }
 
-        "로그인 - 만료된 토큰 테스트" {
+        "로그인 - 만료된 코드 테스트" {
             // given
             coEvery {
                 verificationCodeRepository.findVerificationCodeByEmailAndCode(expiredVerificationCode.email, expiredVerificationCode.code)
@@ -80,7 +80,7 @@ class UserServiceTest(
             exception.statusCode shouldBe HttpStatus.GONE
         }
 
-        "로그인 - 찾을 수 없는 토큰" {
+        "로그인 - 찾을 수 없는 코드" {
             // given
             coEvery {
                 verificationCodeRepository.findVerificationCodeByEmailAndCode(any(), any())
