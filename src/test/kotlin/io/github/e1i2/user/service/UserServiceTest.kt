@@ -50,9 +50,10 @@ class UserServiceTest(
 
         "로그인 테스트" {
             // given
+            coEvery { verificationCodeRepository.save(any()) } coAnswers { verificationCode }
             coEvery { tokenGenerator.generate(any(), any()) } coAnswers { "token" }
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(verificationCode.email, verificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(verificationCode.email, verificationCode.code)
             } coAnswers { verificationCode }
 
             // when
@@ -60,6 +61,7 @@ class UserServiceTest(
 
             // then
             coVerify(exactly = 2) { tokenGenerator.generate(any(), any()) }
+            coVerify(exactly = 1) { verificationCodeRepository.save(any()) }
             tokenDto.accessToken shouldBe "token"
             tokenDto.refreshToken shouldBe "token"
             tokenDto.accessTokenExpireAt shouldBeAfter LocalDateTime.now()
@@ -68,7 +70,7 @@ class UserServiceTest(
         "로그인 - 만료된 코드 테스트" {
             // given
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(expiredVerificationCode.email, expiredVerificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(expiredVerificationCode.email, expiredVerificationCode.code)
             } coAnswers { expiredVerificationCode }
 
             // when
@@ -83,7 +85,7 @@ class UserServiceTest(
         "로그인 - 찾을 수 없는 코드" {
             // given
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(any(), any())
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(any(), any())
             } coAnswers { null }
 
             // when
