@@ -6,9 +6,11 @@ import org.springframework.transaction.reactive.executeAndAwait
 
 object TestUtils {
     fun buildUser(
+        id: Long = 0,
         name: String = "name",
         email: String = "email@gmail.com"
     ) = User(
+        id = id,
         name = name,
         email = email,
         createdAt = LocalDateTime.now()

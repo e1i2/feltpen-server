@@ -44,24 +44,17 @@ class UserService(
     }
 
     private fun generateTokens(subject: String): TokenDto {
-        val accessTokenExpireAt = LocalDateTime.now().plusHours(2)
-        val refreshTokenExpireAt = LocalDateTime.now().plusDays(14)
-
+        val accessTokenExpireAt = LocalDateTime.now().plusDays(14)
         val accessToken = tokenGenerator.generate(subject, accessTokenExpireAt)
-        val refreshToken = tokenGenerator.generate(subject, refreshTokenExpireAt)
 
         return TokenDto(
             accessToken = accessToken,
-            refreshToken = refreshToken,
             accessTokenExpireAt = accessTokenExpireAt,
-            refreshTokenExpireAt = refreshTokenExpireAt
         )
     }
 }
 
 data class TokenDto(
     val accessToken: String,
-    val refreshToken: String,
     val accessTokenExpireAt: LocalDateTime,
-    val refreshTokenExpireAt: LocalDateTime
 )

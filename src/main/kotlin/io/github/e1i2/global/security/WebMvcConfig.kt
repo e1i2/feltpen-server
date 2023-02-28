@@ -10,6 +10,7 @@ class WebMvcConfig : WebFluxConfigurer {
         corsRegistry.addMapping("/**")
             .allowedMethods("*")
             .allowedOriginPatterns("*")
+            .allowCredentials(true)
             .maxAge(3600)
     }
 }

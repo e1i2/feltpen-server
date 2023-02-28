@@ -52,6 +52,7 @@ class UserServiceTest(
             // given
             coEvery { verificationCodeRepository.save(any()) } coAnswers { verificationCode }
             coEvery { tokenGenerator.generate(any(), any()) } coAnswers { "token" }
+            coEvery { verificationCodeRepository.save(any()) } coAnswers { verificationCode }
             coEvery {
                 verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(verificationCode.email, verificationCode.code)
             } coAnswers { verificationCode }
@@ -60,10 +61,9 @@ class UserServiceTest(
             val tokenDto = userService.signIn(verificationCode.email, verificationCode.code)
 
             // then
-            coVerify(exactly = 2) { tokenGenerator.generate(any(), any()) }
+            coVerify(exactly = 1) { tokenGenerator.generate(any(), any()) }
             coVerify(exactly = 1) { verificationCodeRepository.save(any()) }
             tokenDto.accessToken shouldBe "token"
-            tokenDto.refreshToken shouldBe "token"
             tokenDto.accessTokenExpireAt shouldBeAfter LocalDateTime.now()
         }
 
