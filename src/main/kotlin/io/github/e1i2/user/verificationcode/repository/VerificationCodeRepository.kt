@@ -4,5 +4,5 @@ import io.github.e1i2.user.verificationcode.VerificationCode
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface VerificationCodeRepository: CoroutineCrudRepository<VerificationCode, String> {
-    suspend fun findVerificationCodeByEmailAndCodeAndUsedFalse(email: String, code: String): VerificationCode?
+    suspend fun findVerificationCodeByEmailAndCodeAndIsUsedFalse(email: String, code: String): VerificationCode?
 }

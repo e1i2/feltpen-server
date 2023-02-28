@@ -38,7 +38,7 @@ class VerificationCodeRepositoryTest(
             withTransactionRollback(transactionalOperator) {
                 verificationCodeRepository.save(expiredVerificationCode)
 
-                val foundVerificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCodeAndUsedFalse(
+                val foundVerificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCodeAndIsUsedFalse(
                     expiredVerificationCode.email,
                     expiredVerificationCode.code
                 )
