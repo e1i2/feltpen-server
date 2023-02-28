@@ -11,7 +11,7 @@ class TokenAuthentication(
     private val secretKey: String,
     token: String
 ) {
-    val jwtToken = token.removeBearerPrefix()
+    private val jwtToken = token.removeBearerPrefix()
 
     fun parseTokenOrThrowException(): Jws<Claims> {
         val keyBytes = Decoders.BASE64.decode(secretKey)
