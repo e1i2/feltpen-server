@@ -52,7 +52,7 @@ class UserServiceTest(
             // given
             coEvery { tokenGenerator.generate(any(), any()) } coAnswers { "token" }
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(verificationCode.email, verificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndUsedFalse(verificationCode.email, verificationCode.code)
             } coAnswers { verificationCode }
 
             // when
@@ -68,7 +68,7 @@ class UserServiceTest(
         "로그인 - 만료된 코드 테스트" {
             // given
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(expiredVerificationCode.email, expiredVerificationCode.code)
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndUsedFalse(expiredVerificationCode.email, expiredVerificationCode.code)
             } coAnswers { expiredVerificationCode }
 
             // when
@@ -83,7 +83,7 @@ class UserServiceTest(
         "로그인 - 찾을 수 없는 코드" {
             // given
             coEvery {
-                verificationCodeRepository.findVerificationCodeByEmailAndCode(any(), any())
+                verificationCodeRepository.findVerificationCodeByEmailAndCodeAndUsedFalse(any(), any())
             } coAnswers { null }
 
             // when

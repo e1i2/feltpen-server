@@ -12,9 +12,13 @@ data class VerificationCode(
     val code: String = getRandomString(15),
     val email: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val expireAt: LocalDateTime = createdAt.plusMinutes(30)
+    val expireAt: LocalDateTime = createdAt.plusMinutes(30),
+    val isUsed: Boolean = false
 ) {
     fun isExpired(): Boolean {
         return expireAt.isBefore(LocalDateTime.now())
     }
+
+    fun markAsUsed() =
+        copy(isUsed = true)
 }

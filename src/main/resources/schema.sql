@@ -51,7 +51,8 @@ create table verification_code
     code       VARCHAR(15) NOT NULL,
     email      VARCHAR(30) NOT NULL,
     expire_at  DATETIME    NOT NULL,
-    created_at datetime    not null DEFAULT NOW()
+    created_at datetime    not null DEFAULT NOW(),
+    is_used    BIT         NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX EMAIL_INDEX ON verification_code (email);

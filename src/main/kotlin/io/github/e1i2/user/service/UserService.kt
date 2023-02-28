@@ -27,18 +27,20 @@ class UserService(
     }
 
     suspend fun signIn(email: String, code: String): TokenDto {
-        // TODO 한 번 쓴 토큰은 만료되었다고 표시한다
-        throwOnInvalidCode(email, code)
+        val verificationCode = getOrThrowOnInvalidCode(email, code)
+        val usedVerificationCode = verificationCode.markAsUsed()
+        verificationCodeRepository.save(usedVerificationCode)
         return generateTokens(subject = email)
     }
 
-    private suspend fun throwOnInvalidCode(email: String, code: String) {
-        val verificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCode(email, code)
+    private suspend fun getOrThrowOnInvalidCode(email: String, code: String): VerificationCode {
+        val verificationCode = verificationCodeRepository.findVerificationCodeByEmailAndCodeAndUsedFalse(email, code)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Verification code not found")
 
         if (verificationCode.isExpired()) {
             throw ResponseStatusException(HttpStatus.GONE, "Expired verification code")
         }
+        return verificationCode
     }
 
     private fun generateTokens(subject: String): TokenDto {
