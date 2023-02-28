@@ -1,4 +1,4 @@
-package io.github.e1i2.user.verificationcode.repository
+package io.github.e1i2.user.verificationcode
 
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.kotest.core.spec.style.StringSpec
