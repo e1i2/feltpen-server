@@ -15,10 +15,10 @@ class JwtAuthenticationConverter(
     private val jwtProperties: JwtProperties
 ) : ServerAuthenticationConverter {
     override fun convert(exchange: ServerWebExchange): Mono<Authentication> = mono {
-        val authorization = exchange.request.cookies["access-token"]?.firstOrNull()
+        val authorization = exchange.request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull()
 
         authorization?.let {
-            val tokenAuthentication = TokenAuthentication(jwtProperties.secretKey, it.value)
+            val tokenAuthentication = TokenAuthentication(jwtProperties.secretKey, it)
             val claims = tokenAuthentication.parseTokenOrThrowException()
 
             UsernamePasswordAuthenticationToken(claims.body.subject, "")
