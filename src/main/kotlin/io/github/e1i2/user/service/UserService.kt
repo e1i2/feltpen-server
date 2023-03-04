@@ -1,11 +1,15 @@
 package io.github.e1i2.user.service
 
 import io.github.e1i2.global.security.jwt.TokenGenerator
+import io.github.e1i2.user.User
 import io.github.e1i2.user.adapter.MailSender
+import io.github.e1i2.user.repository.UserRepository
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.github.e1i2.user.verificationcode.repository.VerificationCodeRepository
 import java.time.LocalDateTime
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
@@ -13,7 +17,8 @@ import org.springframework.web.server.ResponseStatusException
 class UserService(
     private val verificationCodeRepository: VerificationCodeRepository,
     private val tokenGenerator: TokenGenerator,
-    private val mailSender: MailSender
+    private val mailSender: MailSender,
+    private val userRepository: UserRepository
 ) {
     suspend fun sendVerificationCode(email: String) {
         // TODO VerificaitonCode가 이미 있는 경우 update 방식을 사용해야 한다
@@ -30,6 +35,7 @@ class UserService(
         val verificationCode = getOrThrowOnInvalidCode(email, code)
         val usedVerificationCode = verificationCode.markAsUsed()
         verificationCodeRepository.save(usedVerificationCode)
+        getOrSaveUser(email)
         return generateTokens(subject = email)
     }
 
@@ -41,6 +47,11 @@ class UserService(
             throw ResponseStatusException(HttpStatus.GONE, "Expired verification code")
         }
         return verificationCode
+    }
+
+    private suspend fun getOrSaveUser(email: String): User {
+        val user = userRepository.findByEmail(email)
+        return user ?: userRepository.save(User(email = email))
     }
 
     private fun generateTokens(subject: String): TokenDto {
