@@ -63,9 +63,25 @@ class UserService(
             accessTokenExpireAt = accessTokenExpireAt,
         )
     }
+
+    suspend fun getCurrentUserInfo(): UserInfo {
+        val userId = ReactiveSecurityContextHolder.getContext().awaitSingle().authentication.principal
+        val user = userRepository.findByEmail(userId.toString()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        return UserInfo(
+            userId = user.id,
+            name =  user.name,
+            email =  user.email
+        )
+    }
 }
 
 data class TokenDto(
     val accessToken: String,
     val accessTokenExpireAt: LocalDateTime,
+)
+
+data class UserInfo(
+    val userId: Long,
+    val name: String,
+    val email: String
 )
