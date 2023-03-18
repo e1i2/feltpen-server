@@ -19,7 +19,6 @@ class ExceptionHandlerWebFilter(
     private val objectMapper: ObjectMapper
 ): WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
-        println("${exchange.request.method} ${exchange.request.path}")
         return chain.filter(exchange)
             .onErrorResume {
                 when (it) {
