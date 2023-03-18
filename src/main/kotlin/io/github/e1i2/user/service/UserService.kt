@@ -60,24 +60,13 @@ class UserService(
         )
     }
 
-    suspend fun getCurrentUserInfo(): UserInfo {
-        val userId = authenticationService.currentUserId() ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
-        val user = userRepository.findById(userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        return UserInfo(
-            userId = user.id,
-            name =  user.name,
-            email =  user.email
-        )
+    suspend fun getCurrentUserInfo(): User {
+        val userId = authenticationService.currentUserIdOrThrow()
+        return userRepository.findById(userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
     }
 }
 
 data class TokenDto(
     val accessToken: String,
     val accessTokenExpireAt: LocalDateTime,
-)
-
-data class UserInfo(
-    val userId: Long,
-    val name: String,
-    val email: String
 )

@@ -127,12 +127,12 @@ class UserServiceTest(
 
         "토큰에서 사용자 정보 조회" {
             val id = 1L
-            coEvery { authenticationService.currentUserId() } coAnswers { id }
+            coEvery { authenticationService.currentUserIdOrThrow() } coAnswers { id }
             coEvery { userRepository.findById(id) } coAnswers { buildUser(id = id) }
 
             val result = userService.getCurrentUserInfo()
 
-            result.userId shouldBe id
+            result.id shouldBe id
         }
     }
 }

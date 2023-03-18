@@ -1,7 +1,8 @@
 package io.github.e1i2.workspace.controller
 
+import io.github.e1i2.workspace.invitation.WorkspaceInvitation
 import io.github.e1i2.workspace.service.WorkspaceListResponse
-import io.github.e1i2.workspace.service.WorkspaceMemberListResponse
+import io.github.e1i2.workspace.service.WorkspaceMemberDto
 import io.github.e1i2.workspace.service.WorkspaceResponse
 import io.github.e1i2.workspace.service.WorkspaceService
 import jakarta.validation.Valid
@@ -34,6 +35,19 @@ class WorkspaceController(
         workspaceService.sendWorkspaceInvitation(request.workspaceId, request.emails)
     }
 
+    @GetMapping("/{workspaceId}/invites")
+    suspend fun getInvitedUsers(@PathVariable workspaceId: Long): WorkspaceInvitationListResponse {
+        val workspaceInvitationResponses = workspaceService.getInvitedUsers(workspaceId)
+            .map {
+                WorkspaceInvitationResponse(
+                    invitationId = it.id,
+                    email = it.email,
+                )
+            }
+
+        return WorkspaceInvitationListResponse(workspaceInvitationResponses)
+    }
+
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun joinToWorkspace(@RequestBody @Valid request: JoinWorkspaceRequest) {
@@ -52,7 +66,7 @@ class WorkspaceController(
 
     @GetMapping("/{workspaceId}/members")
     suspend fun getAllWorkspaceMembers(@PathVariable("workspaceId") workspaceId: Long): WorkspaceMemberListResponse {
-        return workspaceService.getAllWorkspaceMember(workspaceId)
+        return WorkspaceMemberListResponse(workspaceService.getAllWorkspaceMember(workspaceId))
     }
 }
 
@@ -72,9 +86,22 @@ data class InviteWorkspaceRequest(
     val emails: List<String>
 )
 
+data class WorkspaceInvitationListResponse(
+    val invitations: List<WorkspaceInvitationResponse>
+)
+data class WorkspaceInvitationResponse(
+    val invitationId: Long,
+    val email: String,
+    val profileImage: String = "https://cdn-icons-png.flaticon.com/512/4812/4812397.png"
+)
+
 data class JoinWorkspaceRequest(
     @NotNull
     val workspaceId: Long,
     @NotBlank
     val code: String
+)
+
+data class WorkspaceMemberListResponse(
+    val users: List<WorkspaceMemberDto>
 )

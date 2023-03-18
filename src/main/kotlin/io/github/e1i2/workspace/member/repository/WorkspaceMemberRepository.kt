@@ -1,7 +1,7 @@
 package io.github.e1i2.workspace.member.repository
 
 import io.github.e1i2.workspace.member.WorkspaceMember
-import io.github.e1i2.workspace.service.WorkspaceMemberResponse
+import io.github.e1i2.workspace.service.WorkspaceMemberDto
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
@@ -15,5 +15,5 @@ interface WorkspaceMemberRepository: CoroutineCrudRepository<WorkspaceMember, Lo
         INNER JOIN user ON workspace_member.user_id = user.id
         WHERE workspace_id = :workspaceId AND workspace_member.deleted_at IS NULL
     """)
-    suspend fun findAllMemberByWorkspaceId(workspaceId: Long): List<WorkspaceMemberResponse>
+    suspend fun findAllMemberByWorkspaceId(workspaceId: Long): List<WorkspaceMemberDto>
 }

@@ -12,7 +12,9 @@ data class WorkspaceMember(
     val deletedAt: LocalDateTime? = null,
     val userId: Long,
     val workspaceId: Long,
-    val role: Role
+    val role: Role,
+    val profileImage: String?,
+    val name: String
 )
 
 enum class Role {

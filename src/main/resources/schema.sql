@@ -22,7 +22,7 @@ create table user
     name       varchar(30) not null,
     created_at datetime    not null,
     deleted_at datetime null,
-    profile_image VARCHAR(512) NOT NULL
+    profile_image VARCHAR(512)
 );
 
 CREATE UNIQUE INDEX EMAIL_UQ ON user (email);
@@ -33,6 +33,7 @@ create table workspace
         primary key,
     name       varchar(15) not null,
     created_at datetime    not null,
+    profile_image VARCHAR(512),
     deleted_at datetime null
 );
 
@@ -43,7 +44,9 @@ create table workspace_member
     workspace_id bigint   not null,
     created_at   datetime not null,
     deleted_at   datetime null,
-    role VARCHAR(255) NOT NULL
+    role VARCHAR(255) NOT NULL,
+    profile_image VARCHAR(512),
+    name VARCHAR(50) NOT NULL
 );
 
 CREATE INDEX MEMBER_WORKSPACE_FK ON workspace_member (workspace_id);

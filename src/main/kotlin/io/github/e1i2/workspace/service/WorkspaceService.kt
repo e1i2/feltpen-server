@@ -2,6 +2,7 @@ package io.github.e1i2.workspace.service
 
 import io.github.e1i2.global.security.authentication.AuthenticationService
 import io.github.e1i2.global.adapter.MailSender
+import io.github.e1i2.user.service.UserService
 import io.github.e1i2.utils.getRandomString
 import io.github.e1i2.workspace.Workspace
 import io.github.e1i2.workspace.invitation.WorkspaceInvitation
@@ -24,18 +25,21 @@ class WorkspaceService(
     private val workspaceMemberRepository: WorkspaceMemberRepository,
     private val authenticationService: AuthenticationService,
     private val transactionalOperator: TransactionalOperator,
+    private val userService: UserService,
     private val mailSender: MailSender
 ) {
     suspend fun saveWorkspace(name: String) = transactionalOperator.executeAndAwait {
-        val creatorId = authenticationService.currentUserIdOrThrow()
+        val creator = userService.getCurrentUserInfo()
 
         val workspace = Workspace(name = name)
         val savedWorkspace = workspaceRepository.save(workspace)
 
         val creatorMember = WorkspaceMember(
             workspaceId = savedWorkspace.id,
-            userId = creatorId,
-            role = Role.OWNER
+            userId = creator.id,
+            role = Role.OWNER,
+            name = creator.name,
+            profileImage = creator.profileImage
         )
         workspaceMemberRepository.save(creatorMember)
 
@@ -66,19 +70,27 @@ class WorkspaceService(
         }
     }
 
-    suspend fun joinToWorkspace(workspaceId: Long, code: String) {
+    suspend fun getInvitedUsers(workspaceId: Long): List<WorkspaceInvitation> {
         val currentUserId = authenticationService.currentUserIdOrThrow()
+        checkIsWorkspaceMember(workspaceId, currentUserId)
+        return workspaceInvitationRepository.findAllByWorkspaceId(workspaceId)
+    }
+
+    suspend fun joinToWorkspace(workspaceId: Long, code: String) {
+        val currentUser = userService.getCurrentUserInfo()
         val invitation = workspaceInvitationRepository.findByWorkspaceIdAndCode(workspaceId, code)
             ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid invitation code")
         invitation.checkIsExpired()
 
-        workspaceMemberRepository.save(
-            WorkspaceMember(
-                workspaceId = workspaceId,
-                userId = currentUserId,
-                role = Role.MEMBER
-            )
+        val workspaceMember = WorkspaceMember(
+            workspaceId = workspaceId,
+            role = Role.MEMBER,
+            userId = currentUser.id,
+            profileImage = currentUser.profileImage,
+            name = currentUser.name
         )
+
+        workspaceMemberRepository.save(workspaceMember)
     }
 
     suspend fun getAllJoinedWorkspace(): WorkspaceListResponse {
@@ -102,11 +114,10 @@ class WorkspaceService(
             createdAt = createdAt
         )
 
-    suspend fun getAllWorkspaceMember(workspaceId: Long): WorkspaceMemberListResponse {
+    suspend fun getAllWorkspaceMember(workspaceId: Long): List<WorkspaceMemberDto> {
         val currentUserId = authenticationService.currentUserIdOrThrow()
         checkIsWorkspaceMember(workspaceId, currentUserId)
-        val workspaceMemberResponses = workspaceMemberRepository.findAllMemberByWorkspaceId(workspaceId)
-        return WorkspaceMemberListResponse(workspaceMemberResponses)
+        return workspaceMemberRepository.findAllMemberByWorkspaceId(workspaceId)
     }
 
     private suspend fun checkIsWorkspaceMember(workspaceId: Long, userId: Long) {
@@ -115,7 +126,7 @@ class WorkspaceService(
         }
     }
 
-    private suspend fun isWorkspaceMember(workspaceId: Long, userId: Long): Boolean {
+    suspend fun isWorkspaceMember(workspaceId: Long, userId: Long): Boolean {
         return workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, userId) != null
     }
 }
@@ -127,17 +138,14 @@ data class WorkspaceListResponse(
 data class WorkspaceResponse(
     val id: Long,
     val name: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val profileImage: String?
 )
 
-data class WorkspaceMemberListResponse(
-    val users: List<WorkspaceMemberResponse>
-)
-
-data class WorkspaceMemberResponse(
+data class WorkspaceMemberDto(
     val userId: Long,
     val memberId: Long,
     val name: String,
-    val profileImage: String,
+    val profileImage: String?,
     val role: String
 )

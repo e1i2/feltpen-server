@@ -12,7 +12,7 @@ data class User(
     val name: String = email.substringBeforeLast("@"),
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val deletedAt: LocalDateTime? = null,
-    val profileImage: String = "https://holyspiritchurch.us/wp-content/uploads/facebook-profile-blank-face.jpeg"
+    val profileImage: String? = null
 ) {
     init {
         validateContents()

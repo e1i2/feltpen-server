@@ -1,7 +1,6 @@
 package io.github.e1i2.user.controller
 
 import io.github.e1i2.user.service.TokenDto
-import io.github.e1i2.user.service.UserInfo
 import io.github.e1i2.user.service.UserService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
@@ -33,7 +32,13 @@ class UserController(
 
     @GetMapping
     suspend fun getCurrentUserInfo(): UserInfo {
-        return userService.getCurrentUserInfo()
+        val user = userService.getCurrentUserInfo()
+        return UserInfo(
+            userId = user.id,
+            email = user.email,
+            profileImage = user.profileImage,
+            name = user.name
+        )
     }
 }
 
@@ -47,4 +52,11 @@ data class SignInRequest(
     val email: String,
     @field:NotBlank
     val code: String
+)
+
+data class UserInfo(
+    val userId: Long,
+    val name: String,
+    val email: String,
+    val profileImage: String?
 )
