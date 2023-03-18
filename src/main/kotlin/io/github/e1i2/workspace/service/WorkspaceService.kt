@@ -111,7 +111,8 @@ class WorkspaceService(
         WorkspaceResponse(
             id = id,
             name = name,
-            createdAt = createdAt
+            createdAt = createdAt,
+            profileImage = profileImage
         )
 
     suspend fun getAllWorkspaceMember(workspaceId: Long): List<WorkspaceMemberDto> {

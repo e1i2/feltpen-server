@@ -11,5 +11,5 @@ data class Workspace(
     val name: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val deletedAt: LocalDateTime? = null,
-    val profileImage: String?
+    val profileImage: String? = null
 )
