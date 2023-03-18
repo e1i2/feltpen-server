@@ -2,7 +2,8 @@ package io.github.e1i2.user.service
 
 import io.github.e1i2.global.security.jwt.TokenGenerator
 import io.github.e1i2.user.TestUtils.buildUser
-import io.github.e1i2.user.adapter.MailSender
+import io.github.e1i2.global.security.authentication.AuthenticationService
+import io.github.e1i2.global.adapter.MailSender
 import io.github.e1i2.user.repository.UserRepository
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.github.e1i2.user.verificationcode.repository.VerificationCodeRepository
@@ -10,6 +11,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.date.shouldBeAfter
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -22,13 +24,19 @@ class UserServiceTest(
     private val mailSender: MailSender = mockk(),
     private val tokenGenerator: TokenGenerator = mockk(),
     private val userRepository: UserRepository = mockk(),
+    private val authenticationService: AuthenticationService = mockk(),
     private val userService: UserService = UserService(
         mailSender = mailSender,
         tokenGenerator = tokenGenerator,
         verificationCodeRepository = verificationCodeRepository,
-        userRepository = userRepository
+        userRepository = userRepository,
+        authenticationService = authenticationService
     )
-) : StringSpec() {
+) : StringSpec({
+    afterTest {
+        clearAllMocks()
+    }
+}) {
     private val user = buildUser()
 
     init {
@@ -115,6 +123,16 @@ class UserServiceTest(
 
             // then
             exception.statusCode shouldBe HttpStatus.NOT_FOUND
+        }
+
+        "토큰에서 사용자 정보 조회" {
+            val id = 1L
+            coEvery { authenticationService.currentUserId() } coAnswers { id }
+            coEvery { userRepository.findById(id) } coAnswers { buildUser(id = id) }
+
+            val result = userService.getCurrentUserInfo()
+
+            result.userId shouldBe id
         }
     }
 }

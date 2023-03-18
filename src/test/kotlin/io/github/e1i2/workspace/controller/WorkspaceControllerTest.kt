@@ -19,7 +19,7 @@ class WorkspaceControllerTest(
     init {
         "Workspace 저장 테스트" {
             val workspaceName = "test"
-            coEvery { workspaceService.saveWorkspace(workspaceName) } coAnswers {}
+            coEvery { workspaceService.saveWorkspace(workspaceName) } coAnswers { 1L }
             val createWorkspaceRequest = buildCreateWorkspaceRequest(workspaceName)
 
             val result = sendRequest(createWorkspaceRequest)

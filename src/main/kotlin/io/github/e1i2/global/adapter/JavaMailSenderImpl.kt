@@ -1,4 +1,4 @@
-package io.github.e1i2.user.adapter
+package io.github.e1i2.global.adapter
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope

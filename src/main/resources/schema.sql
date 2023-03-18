@@ -21,7 +21,8 @@ create table user
     email      varchar(30) not null,
     name       varchar(30) not null,
     created_at datetime    not null,
-    deleted_at datetime null
+    deleted_at datetime null,
+    profile_image VARCHAR(512) NOT NULL
 );
 
 CREATE UNIQUE INDEX EMAIL_UQ ON user (email);
@@ -37,11 +38,12 @@ create table workspace
 
 create table workspace_member
 (
+    id bigint auto_increment primary key,
     user_id      bigint   not null,
     workspace_id bigint   not null,
     created_at   datetime not null,
     deleted_at   datetime null,
-    primary key (user_id, workspace_id)
+    role VARCHAR(255) NOT NULL
 );
 
 create table verification_code

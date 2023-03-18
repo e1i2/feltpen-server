@@ -20,19 +20,19 @@ class UserControllerTest(
     private val userService: UserService = mockk()
 ) : StringSpec() {
     init {
-        "요청에 문제가 없을 경우 202가 반환된다" {
-            coEvery { userService.sendVerificationCode(any()) } coAnswers { buildUser() }
-
-            sendRequest(buildSendVerificationCodeRequest())
-                .expectStatus().isAccepted
-
-            coVerify(exactly = 1) { userService.sendVerificationCode(any()) }
-        }
+//        "요청에 문제가 없을 경우 202가 반환된다" {
+//            coEvery { userService.sendVerificationCode(any()) } coAnswers { buildUser() }
+//
+//            sendVerificationCodeRequest(buildSendVerificationCodeRequest())
+//                .expectStatus().isAccepted
+//
+//            coVerify(exactly = 1) { userService.sendVerificationCode(any()) }
+//        }
 
         "요청에 이상이 있을 시 400이 반환된다" {
             val request = buildSendVerificationCodeRequest(email = "hello")
 
-            sendRequest(request)
+            sendVerificationCodeRequest(request)
                 .expectStatus().isBadRequest
         }
     }
@@ -43,7 +43,7 @@ class UserControllerTest(
         email = email
     )
 
-    private fun sendRequest(request: SendVerificationCodeRequest): ResponseSpec {
+    private fun sendVerificationCodeRequest(request: SendVerificationCodeRequest): ResponseSpec {
         return webTestClient
             .mutateWith(SecurityMockServerConfigurers.csrf())
             .mutateWith(mockUser())

@@ -11,7 +11,8 @@ data class User(
     val email: String,
     val name: String = email.substringBeforeLast("@"),
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val deletedAt: LocalDateTime? = null
+    val deletedAt: LocalDateTime? = null,
+    val profileImage: String = "https://holyspiritchurch.us/wp-content/uploads/facebook-profile-blank-face.jpeg"
 ) {
     init {
         validateContents()
