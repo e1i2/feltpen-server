@@ -46,6 +46,20 @@ create table workspace_member
     role VARCHAR(255) NOT NULL
 );
 
+CREATE INDEX MEMBER_WORKSPACE_FK ON workspace_member (workspace_id);
+CREATE INDEX MEMBER_USER_FK ON workspace_member (user_id);
+
+create table workspace_invitation
+(
+    id           bigint primary key auto_increment,
+    email        VARCHAR(30) not null,
+    workspace_id bigint      not null,
+    expire_at    datetime    not null,
+    code         VARCHAR(20) not null
+);
+
+CREATE INDEX INVITATION_WORKSPACE_FK ON workspace_invitation (workspace_id);
+
 create table verification_code
 (
     id         bigint auto_increment
