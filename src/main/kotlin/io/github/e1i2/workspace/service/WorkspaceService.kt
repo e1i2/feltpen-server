@@ -48,6 +48,7 @@ class WorkspaceService(
 
     suspend fun sendWorkspaceInvitation(workspaceId: Long, targets: List<InvitationTarget>) {
         val userId = authenticationService.currentUserIdOrThrow()
+        // TODO 권한 검사 추가
         if (!isWorkspaceMember(workspaceId, userId)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden")
         }
@@ -75,6 +76,19 @@ class WorkspaceService(
         val currentUserId = authenticationService.currentUserIdOrThrow()
         checkIsWorkspaceMember(workspaceId, currentUserId)
         return workspaceInvitationRepository.findAllByWorkspaceId(workspaceId)
+    }
+
+    suspend fun deleteInvitedUser(invitationId: Long) {
+        val currentUserId = authenticationService.currentUserIdOrThrow()
+        val invitation = workspaceInvitationRepository.findById(invitationId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Workspace invitation not found")
+
+        val workspaceMember = getWorkspaceMemberOrNull(invitation.workspaceId, currentUserId)
+        if (workspaceMember?.role != Role.OWNER) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid role")
+        }
+
+        workspaceInvitationRepository.delete(invitation)
     }
 
     suspend fun joinToWorkspace(workspaceId: Long, code: String) {

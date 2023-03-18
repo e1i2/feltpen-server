@@ -1,6 +1,5 @@
 package io.github.e1i2.workspace.controller
 
-import io.github.e1i2.workspace.invitation.WorkspaceInvitation
 import io.github.e1i2.workspace.service.InvitationTarget
 import io.github.e1i2.workspace.service.WorkspaceListResponse
 import io.github.e1i2.workspace.service.WorkspaceMemberDto
@@ -10,6 +9,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,23 +30,29 @@ class WorkspaceController(
         return CreateWorkspaceResponse(result)
     }
 
-    @PostMapping("/{workspaceId}/invites")
+    @PostMapping("/{workspaceId}/invitations")
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun inviteToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: InviteWorkspaceRequest) {
+    suspend fun inviteToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: InvitationWorkspaceRequest) {
         workspaceService.sendWorkspaceInvitation(workspaceId, request.targets)
     }
 
-    @GetMapping("/{workspaceId}/invites")
+    @GetMapping("/{workspaceId}/invitations")
     suspend fun getInvitedUsers(@PathVariable workspaceId: Long): WorkspaceInvitationListResponse {
         val workspaceInvitationResponses = workspaceService.getInvitedUsers(workspaceId)
             .map {
                 WorkspaceInvitationResponse(
                     invitationId = it.id,
                     email = it.email,
+                    role =  it.role.toString()
                 )
             }
 
         return WorkspaceInvitationListResponse(workspaceInvitationResponses)
+    }
+
+    @DeleteMapping("/invitations/{invitationId}")
+    suspend fun deleteInvite(@PathVariable invitationId: Long) {
+        workspaceService.deleteInvitedUser(invitationId)
     }
 
     @PostMapping("/join")
@@ -80,7 +86,7 @@ data class CreateWorkspaceResponse(
     val workspaceId: Long
 )
 
-data class InviteWorkspaceRequest(
+data class InvitationWorkspaceRequest(
     @NotNull
     val targets: List<InvitationTarget>
 )
@@ -90,7 +96,8 @@ data class WorkspaceInvitationListResponse(
 )
 data class WorkspaceInvitationResponse(
     val invitationId: Long,
-    val email: String
+    val email: String,
+    val role: String
 )
 
 data class JoinWorkspaceRequest(
