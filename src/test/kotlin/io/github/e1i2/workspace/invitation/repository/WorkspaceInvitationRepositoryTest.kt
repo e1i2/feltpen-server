@@ -2,6 +2,7 @@ package io.github.e1i2.workspace.invitation.repository
 
 import io.github.e1i2.user.TestUtils.withTransactionRollback
 import io.github.e1i2.workspace.invitation.WorkspaceInvitation
+import io.github.e1i2.workspace.member.Role
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldNotBe
 import java.time.LocalDateTime
@@ -16,7 +17,7 @@ class WorkspaceInvitationRepositoryTest(
     init {
         "Workspace 초대 저장 테스트" {
             withTransactionRollback(transactionalOperator) {
-                val workspaceInvitation = WorkspaceInvitation(email = "test@gmail.com", workspaceId = 1, code = "test", expireAt = LocalDateTime.now())
+                val workspaceInvitation = WorkspaceInvitation(email = "test@gmail.com", workspaceId = 1, code = "test", expireAt = LocalDateTime.now(), role = Role.MEMBER)
                 val result = workspaceInvitationRepository.save(workspaceInvitation)
                 result.id shouldNotBe 0
             }

@@ -58,7 +58,8 @@ create table workspace_invitation
     email        VARCHAR(30) not null,
     workspace_id bigint      not null,
     expire_at    datetime    not null,
-    code         VARCHAR(20) not null
+    code         VARCHAR(20) not null,
+    role VARCHAR(255) NOT NULl
 );
 
 CREATE INDEX INVITATION_WORKSPACE_FK ON workspace_invitation (workspace_id);

@@ -46,27 +46,28 @@ class WorkspaceService(
         savedWorkspace.id
     }!!
 
-    suspend fun sendWorkspaceInvitation(workspaceId: Long, emails: List<String>) {
+    suspend fun sendWorkspaceInvitation(workspaceId: Long, targets: List<InvitationTarget>) {
         val userId = authenticationService.currentUserIdOrThrow()
         if (!isWorkspaceMember(workspaceId, userId)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden")
         }
-        sendInvitationCodeToEmails(workspaceId, emails)
+        sendInvitationCodeToEmails(workspaceId, targets)
     }
 
-    private suspend fun sendInvitationCodeToEmails(workspaceId: Long, emails: List<String>) {
-        emails.forEach {
+    private suspend fun sendInvitationCodeToEmails(workspaceId: Long, targets: List<InvitationTarget>) {
+        targets.forEach {
             val invitationCode = getRandomString(20)
 
             workspaceInvitationRepository.save(
                 WorkspaceInvitation(
                     workspaceId = workspaceId,
-                    email = it,
+                    email = it.email,
                     code = invitationCode,
-                    expireAt = LocalDateTime.now().plusHours(2)
+                    expireAt = LocalDateTime.now().plusHours(2),
+                    role = it.role
                 )
             )
-            mailSender.sendEmailAsync("Workspace invitation", "localhost:3000/workspace/$workspaceId/join?code=$invitationCode", it)
+            mailSender.sendEmailAsync("Workspace invitation", "localhost:3000/workspace/$workspaceId/join?code=$invitationCode", it.email)
         }
     }
 
@@ -127,10 +128,19 @@ class WorkspaceService(
         }
     }
 
+    suspend fun getWorkspaceMemberOrNull(workspaceId: Long, userId: Long): WorkspaceMember? {
+        return workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, userId)
+    }
+
     suspend fun isWorkspaceMember(workspaceId: Long, userId: Long): Boolean {
-        return workspaceMemberRepository.findByWorkspaceIdAndUserId(workspaceId, userId) != null
+        return getWorkspaceMemberOrNull(workspaceId, userId) != null
     }
 }
+
+data class InvitationTarget(
+    val email: String,
+    val role: Role
+)
 
 data class WorkspaceListResponse(
     val workspaces: List<WorkspaceResponse>

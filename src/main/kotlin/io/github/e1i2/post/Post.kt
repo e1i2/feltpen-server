@@ -1,5 +1,6 @@
 package io.github.e1i2.post
 
+import com.fasterxml.jackson.databind.JsonNode
 import java.time.LocalDateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
@@ -14,7 +15,8 @@ data class Post(
     val title: String,
     val writerId: Long,
     val workspaceId: Long,
-    val status: Status
+    val status: Status,
+    val content: JsonNode
 )
 
 enum class Status {

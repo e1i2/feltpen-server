@@ -19,7 +19,7 @@ class PostService(
     private val authenticationService: AuthenticationService,
     private val workspaceService: WorkspaceService
 ) {
-    suspend fun savePost(title: String, workspaceId: Long): Post {
+    suspend fun savePost(title: String, content: JsonNode, workspaceId: Long, postId: Long?): Post {
         val currentUserId = authenticationService.currentUserIdOrThrow()
         checkWorkspaceMemberOrThrow(workspaceId, currentUserId)
 
@@ -27,9 +27,19 @@ class PostService(
             title = title,
             workspaceId = workspaceId,
             writerId = currentUserId,
-            status = Status.PENDING
+            status = Status.PENDING,
+            content = content,
+            id = postId ?: 0
         )
         return postRepository.save(post)
+    }
+
+    suspend fun getPostById(postId: Long): Post {
+        val currentUserId = authenticationService.currentUserIdOrThrow()
+        val post = postRepository.findById(postId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
+
+        checkWorkspaceMemberOrThrow(post.workspaceId, currentUserId)
+        return post
     }
 
     suspend fun getWorkspacePosts(workspaceId: Long): List<PostAndWorkspaceMember> {
@@ -43,10 +53,6 @@ class PostService(
         if (!workspaceService.isWorkspaceMember(workspaceId, userId)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Not member of workspace")
         }
-    }
-
-    suspend fun putPostContents(blocks: List<JsonNode>) {
-
     }
 }
 

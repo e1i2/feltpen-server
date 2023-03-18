@@ -1,6 +1,7 @@
 package io.github.e1i2.workspace.controller
 
 import io.github.e1i2.workspace.invitation.WorkspaceInvitation
+import io.github.e1i2.workspace.service.InvitationTarget
 import io.github.e1i2.workspace.service.WorkspaceListResponse
 import io.github.e1i2.workspace.service.WorkspaceMemberDto
 import io.github.e1i2.workspace.service.WorkspaceResponse
@@ -29,10 +30,10 @@ class WorkspaceController(
         return CreateWorkspaceResponse(result)
     }
 
-    @PostMapping("/invites")
+    @PostMapping("/{workspaceId}/invites")
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun inviteToWorkspace(@RequestBody @Valid request: InviteWorkspaceRequest) {
-        workspaceService.sendWorkspaceInvitation(request.workspaceId, request.emails)
+    suspend fun inviteToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: InviteWorkspaceRequest) {
+        workspaceService.sendWorkspaceInvitation(workspaceId, request.targets)
     }
 
     @GetMapping("/{workspaceId}/invites")
@@ -80,10 +81,8 @@ data class CreateWorkspaceResponse(
 )
 
 data class InviteWorkspaceRequest(
-    @NotBlank
-    val workspaceId: Long,
     @NotNull
-    val emails: List<String>
+    val targets: List<InvitationTarget>
 )
 
 data class WorkspaceInvitationListResponse(
@@ -91,8 +90,7 @@ data class WorkspaceInvitationListResponse(
 )
 data class WorkspaceInvitationResponse(
     val invitationId: Long,
-    val email: String,
-    val profileImage: String = "https://cdn-icons-png.flaticon.com/512/4812/4812397.png"
+    val email: String
 )
 
 data class JoinWorkspaceRequest(

@@ -1,5 +1,6 @@
 package io.github.e1i2.workspace.invitation
 
+import io.github.e1i2.workspace.member.Role
 import java.time.LocalDateTime
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
@@ -13,7 +14,8 @@ data class WorkspaceInvitation(
     val code: String,
     val email: String,
     val workspaceId: Long,
-    val expireAt: LocalDateTime
+    val expireAt: LocalDateTime,
+    val role: Role
 ) {
     fun checkIsExpired() {
         if (expireAt.isBefore(LocalDateTime.now())) {
