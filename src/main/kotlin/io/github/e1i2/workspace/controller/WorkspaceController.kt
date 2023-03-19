@@ -55,10 +55,10 @@ class WorkspaceController(
         workspaceService.deleteInvitedUser(invitationId)
     }
 
-    @PostMapping("/join")
+    @PostMapping("/{workspaceId}/join")
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun joinToWorkspace(@RequestBody @Valid request: JoinWorkspaceRequest) {
-        workspaceService.joinToWorkspace(request.workspaceId, request.code)
+    suspend fun joinToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: JoinWorkspaceRequest) {
+        workspaceService.joinToWorkspace(workspaceId, request.code)
     }
 
     @GetMapping("/list")
@@ -101,8 +101,6 @@ data class WorkspaceInvitationResponse(
 )
 
 data class JoinWorkspaceRequest(
-    @NotNull
-    val workspaceId: Long,
     @NotBlank
     val code: String
 )

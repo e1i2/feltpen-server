@@ -68,7 +68,7 @@ class WorkspaceService(
                     role = it.role
                 )
             )
-            mailSender.sendEmailAsync("Workspace invitation", "localhost:3000/workspace/$workspaceId/join?code=$invitationCode", it.email)
+            mailSender.sendEmailAsync("Workspace invitation", "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode", it.email)
         }
     }
 
