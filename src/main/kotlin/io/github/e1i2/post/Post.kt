@@ -17,7 +17,15 @@ data class Post(
     val workspaceId: Long,
     val status: Status,
     val content: JsonNode
-)
+) {
+    fun getUpdatedPost(title: String, content: JsonNode): Post {
+        return copy(
+            title = title,
+            content = content,
+            updatedAt = LocalDateTime.now()
+        )
+    }
+}
 
 enum class Status {
     PENDING,

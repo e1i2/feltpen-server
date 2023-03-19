@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.github.e1i2.global.security.authentication.AuthenticationService
 import io.github.e1i2.post.Post
 import io.github.e1i2.post.Status
-import io.github.e1i2.post.block.repository.BlockRepository
 import io.github.e1i2.post.repository.PostRepository
 import io.github.e1i2.workspace.service.WorkspaceService
 import java.time.LocalDateTime
@@ -14,12 +13,11 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class PostService(
-    private val blockRepository: BlockRepository,
     private val postRepository: PostRepository,
     private val authenticationService: AuthenticationService,
     private val workspaceService: WorkspaceService
 ) {
-    suspend fun savePost(title: String, content: JsonNode, workspaceId: Long, postId: Long?): Post {
+    suspend fun savePost(title: String, content: JsonNode, workspaceId: Long): Post {
         val currentUserId = authenticationService.currentUserIdOrThrow()
         checkWorkspaceMemberOrThrow(workspaceId, currentUserId)
 
@@ -28,10 +26,18 @@ class PostService(
             workspaceId = workspaceId,
             writerId = currentUserId,
             status = Status.PENDING,
-            content = content,
-            id = postId ?: 0
+            content = content
         )
         return postRepository.save(post)
+    }
+
+    suspend fun updatePost(title: String, content: JsonNode, status: Status, workspaceId: Long, postId: Long): Post {
+        val currentUserId = authenticationService.currentUserIdOrThrow()
+        checkWorkspaceMemberOrThrow(workspaceId, currentUserId)
+
+        val post = postRepository.findById(postId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
+
+        return postRepository.save(post.getUpdatedPost(title, content))
     }
 
     suspend fun getPostById(postId: Long): Post {

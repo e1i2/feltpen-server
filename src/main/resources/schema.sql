@@ -8,7 +8,8 @@ create table post
     updated_at   datetime     not null,
     deleted_at   datetime null,
     workspace_id bigint       not null,
-    writer_id    bigint       not null
+    writer_id    bigint       not null,
+    status VARCHAR(100) NOT NULL
 );
 
 CREATE INDEX USER_FK ON post (writer_id);
