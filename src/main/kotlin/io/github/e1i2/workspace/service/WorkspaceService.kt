@@ -46,7 +46,7 @@ class WorkspaceService(
         savedWorkspace.id
     }!!
 
-    suspend fun sendWorkspaceInvitation(workspaceId: Long, targets: List<InvitationTarget>) {
+    suspend fun sendWorkspaceInvitation(workspaceId: Long, targets: List<InvitationTarget>) = transactionalOperator.executeAndAwait {
         val userId = authenticationService.currentUserIdOrThrow()
         // TODO 권한 검사 추가
         if (!isWorkspaceMember(workspaceId, userId)) {
@@ -57,18 +57,24 @@ class WorkspaceService(
 
     private suspend fun sendInvitationCodeToEmails(workspaceId: Long, targets: List<InvitationTarget>) {
         targets.forEach {
-            val invitationCode = getRandomString(20)
+            runCatching {
+                val invitationCode = getRandomString(20)
 
-            workspaceInvitationRepository.save(
-                WorkspaceInvitation(
-                    workspaceId = workspaceId,
-                    email = it.email,
-                    code = invitationCode,
-                    expireAt = LocalDateTime.now().plusHours(2),
-                    role = it.role
+                workspaceInvitationRepository.save(
+                    WorkspaceInvitation(
+                        workspaceId = workspaceId,
+                        email = it.email,
+                        code = invitationCode,
+                        expireAt = LocalDateTime.now().plusHours(2),
+                        role = it.role
+                    )
                 )
-            )
-            mailSender.sendEmailAsync("Workspace invitation", "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode", it.email)
+                mailSender.sendEmailAsync(
+                    "Workspace invitation",
+                    "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode",
+                    it.email
+                )
+            }
         }
     }
 
@@ -91,11 +97,12 @@ class WorkspaceService(
         workspaceInvitationRepository.delete(invitation)
     }
 
-    suspend fun joinToWorkspace(workspaceId: Long, code: String) {
+    suspend fun joinToWorkspace(workspaceId: Long, code: String) = transactionalOperator.executeAndAwait {
         val currentUser = userService.getCurrentUserInfo()
         val invitation = workspaceInvitationRepository.findByWorkspaceIdAndCode(workspaceId, code)
             ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid invitation code")
         invitation.checkIsExpired()
+        workspaceInvitationRepository.delete(invitation)
 
         val workspaceMember = WorkspaceMember(
             workspaceId = workspaceId,
