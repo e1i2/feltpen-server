@@ -47,7 +47,8 @@ create table workspace_member
     deleted_at   datetime null,
     role VARCHAR(255) NOT NULL,
     profile_image VARCHAR(512),
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL,
+    UNIQUE (user_id, workspace_id)
 );
 
 CREATE INDEX MEMBER_WORKSPACE_FK ON workspace_member (workspace_id);

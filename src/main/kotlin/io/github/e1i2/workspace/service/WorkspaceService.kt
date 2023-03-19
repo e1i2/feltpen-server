@@ -12,6 +12,7 @@ import io.github.e1i2.workspace.member.WorkspaceMember
 import io.github.e1i2.workspace.member.repository.WorkspaceMemberRepository
 import io.github.e1i2.workspace.repository.WorkspaceRepository
 import java.time.LocalDateTime
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -57,9 +58,9 @@ class WorkspaceService(
 
     private suspend fun sendInvitationCodeToEmails(workspaceId: Long, targets: List<InvitationTarget>) {
         targets.forEach {
-            runCatching {
-                val invitationCode = getRandomString(20)
+            val invitationCode = getRandomString(20)
 
+            runCatching {
                 workspaceInvitationRepository.save(
                     WorkspaceInvitation(
                         workspaceId = workspaceId,
@@ -69,12 +70,12 @@ class WorkspaceService(
                         role = it.role
                     )
                 )
-                mailSender.sendEmailAsync(
-                    "Workspace invitation",
-                    "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode",
-                    it.email
-                )
             }
+            mailSender.sendEmailAsync(
+                "Workspace invitation",
+                "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode",
+                it.email
+            )
         }
     }
 
@@ -112,7 +113,13 @@ class WorkspaceService(
             name = currentUser.name
         )
 
-        workspaceMemberRepository.save(workspaceMember)
+        runCatching {
+            workspaceMemberRepository.save(workspaceMember)
+        }.onFailure {
+            if (it is DuplicateKeyException) {
+                throw ResponseStatusException(HttpStatus.CONFLICT, "Already joined user")
+            }
+        }
     }
 
     suspend fun getAllJoinedWorkspace(): WorkspaceListResponse {
