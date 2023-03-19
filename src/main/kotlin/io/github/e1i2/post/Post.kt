@@ -28,6 +28,6 @@ data class Post(
 }
 
 enum class Status {
-    PENDING,
-    COMPLETE
+    DRAFT,
+    PUBLISHED
 }
