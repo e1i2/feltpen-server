@@ -17,10 +17,8 @@ class PostController(
     private val postService: PostService
 ) {
     @PostMapping("/workspaces/{workspaceId}/posts")
-    suspend fun saveNewPost(
-        @PathVariable workspaceId: Long,
-        @RequestBody request: PostCreateRequest): Long {
-        return postService.savePost(request.title, request.content, workspaceId).id
+    suspend fun saveNewPost(@PathVariable workspaceId: Long): Long {
+        return postService.savePost(workspaceId).id
     }
 
     @PutMapping("/workspaces/posts/{postId}")
@@ -49,11 +47,6 @@ class PostController(
         return WorkspaceListResponse(postAndMembers)
     }
 }
-
-data class PostCreateRequest(
-    val title: String = "Untitled",
-    val content: JsonNode
-)
 
 data class PostUpdateRequest(
     val title: String,
