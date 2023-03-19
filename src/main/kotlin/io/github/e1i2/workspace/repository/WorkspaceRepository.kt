@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface WorkspaceRepository: CoroutineCrudRepository<Workspace, Long> {
-    @Query("""SELECT * FROM workspace
+    @Query("""SELECT workspace.* FROM workspace
         INNER JOIN workspace_member ON workspace.id = workspace_member.workspace_id
         WHERE workspace_member.user_id = :userId AND workspace.deleted_at IS NULL""")
     suspend fun findAllByWorkspaceMemberId(userId: Long): List<Workspace>
