@@ -37,7 +37,7 @@ class PostService(
     suspend fun updatePost(title: String, content: JsonNode, status: Status, postId: Long): Post {
         val currentUserId = authenticationService.currentUserIdOrThrow()
         val post = postRepository.findById(postId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")
-        checkWorkspaceMemberOrThrow(post.id, currentUserId)
+        checkWorkspaceMemberOrThrow(post.workspaceId, currentUserId)
 
         return postRepository.save(post.getUpdatedPost(title, content))
     }
