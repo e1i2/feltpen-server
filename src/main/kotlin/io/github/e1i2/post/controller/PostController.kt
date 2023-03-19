@@ -37,7 +37,8 @@ class PostController(
             createdAt = post.createdAt,
             updatedAt = post.createdAt,
             content = post.content,
-            title = post.title
+            title = post.title,
+            status = post.status.toString()
         )
     }
 
@@ -59,7 +60,8 @@ data class PostResponse(
     val content: JsonNode,
     val title: String,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val updatedAt: LocalDateTime,
+    val status: String
 )
 
 data class WorkspaceListResponse(
