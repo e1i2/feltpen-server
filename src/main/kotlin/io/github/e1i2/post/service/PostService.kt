@@ -28,7 +28,7 @@ class PostService(
             title = "",
             workspaceId = workspaceId,
             writerId = workspaceMember.id,
-            status = Status.PENDING,
+            status = Status.DRAFT,
             content = objectMapper.createObjectNode()
         )
         return postRepository.save(post)
