@@ -10,31 +10,28 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RequestMapping("/posts")
 @RestController
 class PostController(
     private val postService: PostService
 ) {
-    @PostMapping("/{workspaceId}")
+    @PostMapping("/workspaces/{workspaceId}/posts")
     suspend fun saveNewPost(
         @PathVariable workspaceId: Long,
         @RequestBody request: PostCreateRequest): Long {
         return postService.savePost(request.title, request.content, workspaceId).id
     }
 
-    @PutMapping("/{workspaceId}/{postId}")
+    @PutMapping("/workspaces/posts/{postId}")
     suspend fun updatePost(
-        @PathVariable workspaceId: Long,
         @PathVariable postId: Long,
         @RequestBody request: PostUpdateRequest
     ): Long {
-        return postService.updatePost(request.title, request.content, request.status, workspaceId, postId).id
+        return postService.updatePost(request.title, request.content, request.status, postId).id
     }
 
-    @GetMapping("/{postId}")
+    @GetMapping("/workspaces/posts/{postId}")
     suspend fun getPost(@PathVariable postId: Long): PostResponse {
         val post = postService.getPostById(postId)
         return PostResponse(
@@ -46,9 +43,10 @@ class PostController(
         )
     }
 
-    @GetMapping("/{workspaceId}")
-    suspend fun getWorkspacePosts(@PathVariable workspaceId: Long): List<PostAndWorkspaceMember> {
-        return postService.getWorkspacePosts(workspaceId)
+    @GetMapping("/workspaces/{workspaceId}/posts")
+    suspend fun getWorkspacePosts(@PathVariable workspaceId: Long): WorkspaceListResponse {
+        val postAndMembers = postService.getWorkspacePosts(workspaceId)
+        return WorkspaceListResponse(postAndMembers)
     }
 }
 
@@ -69,4 +67,8 @@ data class PostResponse(
     val title: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
+)
+
+data class WorkspaceListResponse(
+    val posts: List<PostAndWorkspaceMember>
 )
