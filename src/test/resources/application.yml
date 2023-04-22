@@ -1,0 +1,11 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///test;NON_KEYWORDS=USER
+    username: sa
+    password:
+  sql:
+    init:
+      mode: embedded
+
+jwt:
+  secretKey: "tmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsadtmpSecretadsfsadfdsafasdfsad"
