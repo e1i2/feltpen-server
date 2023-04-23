@@ -64,7 +64,7 @@ jobs:
       - name: File exists
         if: steps.check_values_exists.outputs.files_exists == 'true'
         run: |
-          sudo sed -i '' 's/version\: .*/version\: ${{ env.version }}/g' services/chart/values/${{ env.template_file_path }}.yaml
+          sudo sed -i '' 's/version\: .*/version\: ${{ env.version }}/g' ${{ env.template_file_path }}
       
       - name: create values.yaml
         uses: danielr1996/envsubst-action@1.0.0
