@@ -1,3 +1,18 @@
+create table folder
+(
+    id               bigint       not null auto_increment primary key,
+    name             varchar(100) not null,
+    created_at       datetime     not null,
+    updated_at       datetime     not null,
+    deleted_at       datetime,
+    parent_folder_id bigint,
+    writer_id        bigint       not null,
+    workspace_id     bigint       not null
+);
+
+create index created_at_index on folder (created_at);
+create index parent_folder_id_index on folder (parent_folder_id);
+
 create table post
 (
     id           bigint       not null auto_increment
