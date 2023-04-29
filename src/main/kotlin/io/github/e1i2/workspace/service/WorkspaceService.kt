@@ -12,6 +12,8 @@ import io.github.e1i2.workspace.member.WorkspaceMember
 import io.github.e1i2.workspace.member.repository.WorkspaceMemberRepository
 import io.github.e1i2.workspace.repository.WorkspaceRepository
 import java.time.LocalDateTime
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.ClassPathResource
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -29,6 +31,8 @@ class WorkspaceService(
     private val userService: UserService,
     private val mailSender: MailSender
 ) {
+    private val workspaceInvitationContent: String = String(ClassPathResource("workspace-invitation.html").inputStream.readAllBytes())
+
     suspend fun saveWorkspace(name: String) = transactionalOperator.executeAndAwait {
         val creator = userService.getCurrentUserInfo()
 
@@ -49,10 +53,7 @@ class WorkspaceService(
 
     suspend fun sendWorkspaceInvitation(workspaceId: Long, targets: List<InvitationTarget>) = transactionalOperator.executeAndAwait {
         val userId = authenticationService.currentUserIdOrThrow()
-        // TODO 권한 검사 추가
-        if (!isWorkspaceMember(workspaceId, userId)) {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden")
-        }
+        checkIsWorkspaceMember(workspaceId, userId)
         sendInvitationCodeToEmails(workspaceId, targets)
     }
 
@@ -71,9 +72,11 @@ class WorkspaceService(
                     )
                 )
             }
+            val content = workspaceInvitationContent.replace("{{ url }}", "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode")
+
             mailSender.sendEmailAsync(
                 "Workspace invitation",
-                "https://app.feltpen.site/workspaces/$workspaceId/join?code=$invitationCode",
+                content,
                 it.email
             )
         }

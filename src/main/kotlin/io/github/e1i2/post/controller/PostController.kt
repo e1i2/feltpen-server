@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController
 class PostController(
     private val postService: PostService
 ) {
-    @PostMapping("/workspaces/{workspaceId}/posts")
-    suspend fun saveNewPost(@PathVariable workspaceId: Long): Long {
-        return postService.savePost(workspaceId).id
+    @PostMapping("/workspaces/{workspaceId}/posts/{folderId}")
+    suspend fun saveNewPost(
+        @PathVariable workspaceId: Long,
+        @PathVariable folderId: Long
+    ): Long {
+        return postService.savePost(workspaceId, folderId).id
     }
 
     @PutMapping("/workspaces/posts/{postId}")
@@ -35,15 +38,24 @@ class PostController(
         return PostResponse(
             id = post.id,
             createdAt = post.createdAt,
-            updatedAt = post.createdAt,
+            updatedAt = post.updatedAt,
             content = post.content,
             title = post.title,
-            status = post.status.toString()
+            status = post.toString()
         )
     }
 
     @GetMapping("/workspaces/{workspaceId}/posts")
     suspend fun getWorkspacePosts(@PathVariable workspaceId: Long): WorkspaceListResponse {
+        val postAndMembers = postService.getWorkspacePosts(workspaceId)
+        return WorkspaceListResponse(postAndMembers)
+    }
+
+    @GetMapping("/workspaces/{workspaceId}/posts/{folderId}")
+    suspend fun getPostsInFolder(
+        @PathVariable workspaceId: Long,
+        @PathVariable folderId: Long
+    ): WorkspaceListResponse {
         val postAndMembers = postService.getWorkspacePosts(workspaceId)
         return WorkspaceListResponse(postAndMembers)
     }
