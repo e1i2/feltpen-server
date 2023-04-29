@@ -1,15 +1,18 @@
 package io.github.e1i2.user.service
 
+import io.github.e1i2.global.adapter.MailSender
 import io.github.e1i2.global.security.authentication.AuthenticationService
 import io.github.e1i2.global.security.jwt.TokenGenerator
-import io.github.e1i2.global.adapter.MailSender
 import io.github.e1i2.user.User
 import io.github.e1i2.user.repository.UserRepository
 import io.github.e1i2.user.verificationcode.VerificationCode
 import io.github.e1i2.user.verificationcode.repository.VerificationCodeRepository
 import java.time.LocalDateTime
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.util.FileCopyUtils
 import org.springframework.web.server.ResponseStatusException
 
 @Component
@@ -20,10 +23,14 @@ class UserService(
     private val userRepository: UserRepository,
     private val authenticationService: AuthenticationService
 ) {
+
+    private val verificationCodeContent: String = String(ClassPathResource("verification-code.html").inputStream.readAllBytes())
+
     suspend fun sendVerificationCode(email: String) {
         // TODO VerificaitonCode가 이미 있는 경우 update 방식을 사용해야 한다
         val verificationCode = saveVerificationCode(email)
-        mailSender.sendEmailAsync("인증 코드", verificationCode.code, email)
+        val content = verificationCodeContent.replace("{{ code }}", verificationCode.code)
+        mailSender.sendEmailAsync("인증 코드", content, email)
     }
 
     private suspend fun saveVerificationCode(email: String): VerificationCode {
