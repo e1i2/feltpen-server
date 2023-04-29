@@ -45,3 +45,9 @@ fun Folder.getChildrenNodes(foldersByParentFolderId: Map<Long?, List<Folder>>): 
 
     return FolderTree(this, childrenNodes)
 }
+
+enum class ServiceFolders(
+    val folderName: String
+) {
+    USER_GUIDE("/user-guide")
+}

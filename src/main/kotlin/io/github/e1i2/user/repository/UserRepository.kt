@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CoroutineCrudRepository<User, Long> {
     suspend fun findByEmail(email: String): User?
+    suspend fun findAllByIdIn(ids: List<Long>): List<User>
 }

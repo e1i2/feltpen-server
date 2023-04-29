@@ -6,8 +6,7 @@ create table folder
     updated_at       datetime     not null,
     deleted_at       datetime,
     parent_folder_id bigint,
-    writer_id        bigint       not null,
-    workspace_id     bigint       not null
+    writer_id        bigint       not null
 );
 
 create index created_at_index on folder (created_at);
@@ -15,20 +14,26 @@ create index parent_folder_id_index on folder (parent_folder_id);
 
 create table post
 (
-    id           bigint       not null auto_increment
-        primary key,
-    title        varchar(100) not null,
-    content      json         not null,
-    created_at   datetime     not null,
-    updated_at   datetime     not null,
-    deleted_at   datetime null,
-    workspace_id bigint       not null,
-    writer_id    bigint       not null,
-    status VARCHAR(100) NOT NULL
+    id         bigint       not null primary key auto_increment,
+    created_at datetime     not null,
+    folder_id  bigint       not null,
+    status     varchar(100) not null
 );
 
-CREATE INDEX USER_FK ON post (writer_id);
-CREATE INDEX WORKSPACE_FK ON post (workspace_id);
+CREATE INDEX FOLDER_FK ON folder_post (folder_id);
+
+create table post_data
+(
+    id             bigint       not null auto_increment
+        primary key,
+    folder_post_id bigint       not null,
+    title          varchar(100) not null,
+    content        json         not null,
+    created_at     datetime     not null,
+    deleted_at     datetime null
+);
+
+CREATE INDEX USER_FK ON post_data (folder_post_id);
 
 create table user
 (
