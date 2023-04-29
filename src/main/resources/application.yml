@@ -22,7 +22,7 @@ spring:
       sslMode: VERIFY_IDENTITY
 
   application:
-    name: e1i2-server
+    name: feltpen-server
 
 springdoc:
   api-docs:
