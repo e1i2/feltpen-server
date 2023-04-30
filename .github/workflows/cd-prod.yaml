@@ -45,6 +45,13 @@ jobs:
         tags: feltpen/live:${{ env.docker_image_name }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          "DB_HOST=${{ secrets.DB_HOST }}"
+          "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+          "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+          "DEFAULT_DATABASE=${{ secrets.DEFAULT_DATABASE }}"
+          "SMTP_EMAIL=${{ secrets.SMTP_EMAIL }}"
+          "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}"
   
   
   update-argocd-metadata:
