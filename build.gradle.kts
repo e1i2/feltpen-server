@@ -34,9 +34,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.16")
+    runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.23")
 
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")

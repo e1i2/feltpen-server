@@ -24,6 +24,14 @@ spring:
   application:
     name: feltpen-server
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "health"
+      base-path: "/"
+
 springdoc:
   api-docs:
     path: /api-docs
