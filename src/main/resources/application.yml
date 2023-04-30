@@ -32,6 +32,9 @@ management:
           - "health"
       base-path: "/"
 
+  health:
+    mail:
+      enabled: false
 springdoc:
   api-docs:
     path: /api-docs
