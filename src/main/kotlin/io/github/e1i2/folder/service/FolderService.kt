@@ -16,6 +16,17 @@ class FolderService(
         folderTree.findChildByName(name)
     }
 
+    suspend fun saveRootFolder(workspaceId: Long, writerId: Long) {
+        folderRepository.save(
+            Folder(
+                parentFolderId = null,
+                name = "",
+                workspaceId = workspaceId,
+                writerId = writerId,
+            )
+        )
+    }
+
     suspend fun getFolderOrNull(folderId: Long): Folder? {
         return folderRepository.findById(folderId)
     }
