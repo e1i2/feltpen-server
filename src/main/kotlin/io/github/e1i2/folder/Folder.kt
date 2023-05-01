@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException
 @Table("folder")
 data class Folder(
     @Id
-    val id: Long,
+    val id: Long = 0,
     val name: String,
     val parentFolderId: Long?, // null인경우 root node를 의미한다
     val writerId: Long,

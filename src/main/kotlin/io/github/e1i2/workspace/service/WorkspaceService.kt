@@ -1,5 +1,6 @@
 package io.github.e1i2.workspace.service
 
+import io.github.e1i2.folder.service.FolderService
 import io.github.e1i2.global.security.authentication.AuthenticationService
 import io.github.e1i2.global.adapter.MailSender
 import io.github.e1i2.user.service.UserService
@@ -12,7 +13,6 @@ import io.github.e1i2.workspace.member.WorkspaceMember
 import io.github.e1i2.workspace.member.repository.WorkspaceMemberRepository
 import io.github.e1i2.workspace.repository.WorkspaceRepository
 import java.time.LocalDateTime
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
@@ -29,24 +29,26 @@ class WorkspaceService(
     private val authenticationService: AuthenticationService,
     private val transactionalOperator: TransactionalOperator,
     private val userService: UserService,
+    private val folderService: FolderService,
     private val mailSender: MailSender
 ) {
     private val workspaceInvitationContent: String = String(ClassPathResource("workspace-invitation.html").inputStream.readAllBytes())
 
     suspend fun saveWorkspace(name: String) = transactionalOperator.executeAndAwait {
-        val creator = userService.getCurrentUserInfo()
+        val creatorUser = userService.getCurrentUserInfo()
 
         val workspace = Workspace(name = name)
         val savedWorkspace = workspaceRepository.save(workspace)
 
         val creatorMember = WorkspaceMember(
             workspaceId = savedWorkspace.id,
-            userId = creator.id,
+            userId = creatorUser.id,
             role = Role.OWNER,
-            name = creator.name,
-            profileImage = creator.profileImage
+            name = creatorUser.name,
+            profileImage = creatorUser.profileImage
         )
-        workspaceMemberRepository.save(creatorMember)
+        val savedCreatorMember = workspaceMemberRepository.save(creatorMember)
+        folderService.saveRootFolder(savedWorkspace.id, savedCreatorMember.id)
 
         savedWorkspace.id
     }!!
