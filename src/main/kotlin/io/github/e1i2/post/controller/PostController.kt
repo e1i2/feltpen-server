@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class PostController(
     private val postService: PostService
 ) {
-    @PostMapping("/workspaces/{workspaceId}/posts/{folderId}")
+    @PostMapping("/api-public/feltpen/workspaces/{workspaceId}/posts/{folderId}")
     suspend fun saveNewPost(
         @PathVariable workspaceId: Long,
         @PathVariable folderId: Long
@@ -24,7 +24,7 @@ class PostController(
         return postService.savePost(workspaceId, folderId).id
     }
 
-    @PutMapping("/workspaces/posts/{postId}")
+    @PutMapping("/api-public/feltpen/workspaces/posts/{postId}")
     suspend fun updatePost(
         @PathVariable postId: Long,
         @RequestBody request: PostUpdateRequest
@@ -32,7 +32,7 @@ class PostController(
         return postService.updatePost(request.title, request.content, request.status, postId).id
     }
 
-    @GetMapping("/workspaces/posts/{postId}")
+    @GetMapping("/api-public/feltpen/workspaces/posts/{postId}")
     suspend fun getPost(@PathVariable postId: Long): PostResponse {
         val post = postService.getPostById(postId)
         return PostResponse(
@@ -45,13 +45,13 @@ class PostController(
         )
     }
 
-    @GetMapping("/workspaces/{workspaceId}/posts")
+    @GetMapping("/api-public/feltpen/workspaces/{workspaceId}/posts")
     suspend fun getWorkspacePosts(@PathVariable workspaceId: Long): WorkspaceListResponse {
         val postAndMembers = postService.getWorkspacePosts(workspaceId)
         return WorkspaceListResponse(postAndMembers)
     }
 
-    @GetMapping("/workspaces/{workspaceId}/posts/{folderId}")
+    @GetMapping("/api-public/feltpen/workspaces/{workspaceId}/posts/{folderId}")
     suspend fun getPostsInFolder(
         @PathVariable workspaceId: Long,
         @PathVariable folderId: Long

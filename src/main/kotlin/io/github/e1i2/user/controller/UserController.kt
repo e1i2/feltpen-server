@@ -14,23 +14,22 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/users")
 class UserController(
     private val userService: UserService
 ) {
-    @PostMapping("/verification-code")
+    @PostMapping("/api-public/feltpen/users/verification-code")
     @ResponseStatus(HttpStatus.ACCEPTED)
     suspend fun sendVerificationCode(@RequestBody @Valid request: SendVerificationCodeRequest) {
         userService.sendVerificationCode(request.email)
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/api-public/feltpen/users/signin")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signIn(@RequestBody @Valid signInRequest: SignInRequest): TokenDto {
         return userService.signIn(signInRequest.email, signInRequest.code)
     }
 
-    @GetMapping
+    @GetMapping("/api-public/feltpen/users")
     suspend fun getCurrentUserInfo(): UserInfo {
         val user = userService.getCurrentUserInfo()
         return UserInfo(

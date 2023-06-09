@@ -19,24 +19,22 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/workspaces")
 class WorkspaceController(
     private val workspaceService: WorkspaceService
 ) {
-    @PostMapping
+    @PostMapping("/api-public/feltpen/workspaces")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun saveWorkspace(@RequestBody @Valid request: CreateWorkspaceRequest): CreateWorkspaceResponse {
         val result = workspaceService.saveWorkspace(request.workspaceName)
         return CreateWorkspaceResponse(result)
     }
-
-    @PostMapping("/{workspaceId}/invitations")
+    @PostMapping("/api-public/feltpen/workspaces/{workspaceId}/invitations")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun inviteToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: InvitationWorkspaceRequest) {
         workspaceService.sendWorkspaceInvitation(workspaceId, request.targets)
     }
 
-    @GetMapping("/{workspaceId}/invitations")
+    @GetMapping("/api-public/feltpen/workspaces/{workspaceId}/invitations")
     suspend fun getInvitedUsers(@PathVariable workspaceId: Long): WorkspaceInvitationListResponse {
         val workspaceInvitationResponses = workspaceService.getInvitedUsers(workspaceId)
             .map {
@@ -50,28 +48,28 @@ class WorkspaceController(
         return WorkspaceInvitationListResponse(workspaceInvitationResponses)
     }
 
-    @DeleteMapping("/invitations/{invitationId}")
+    @DeleteMapping("/api-public/feltpen/workspaces/invitations/{invitationId}")
     suspend fun deleteInvite(@PathVariable invitationId: Long) {
         workspaceService.deleteInvitedUser(invitationId)
     }
 
-    @PostMapping("/{workspaceId}/join")
+    @PostMapping("/api-public/feltpen/workspaces/{workspaceId}/join")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun joinToWorkspace(@PathVariable workspaceId: Long, @RequestBody @Valid request: JoinWorkspaceRequest) {
         workspaceService.joinToWorkspace(workspaceId, request.code)
     }
 
-    @GetMapping("/list")
+    @GetMapping("/api-public/feltpen/workspaces/list")
     suspend fun getAllJoinedWorkspace(): WorkspaceListResponse {
         return workspaceService.getAllJoinedWorkspace()
     }
 
-    @GetMapping("/{workspaceId}")
+    @GetMapping("/api-public/feltpen/workspaces/{workspaceId}")
     suspend fun getWorkspaceById(@PathVariable("workspaceId") workspaceId: Long): WorkspaceResponse {
         return workspaceService.getWorkspaceById(workspaceId)
     }
 
-    @GetMapping("/{workspaceId}/members")
+    @GetMapping("/api-public/feltpen/workspaces/{workspaceId}/members")
     suspend fun getAllWorkspaceMembers(@PathVariable("workspaceId") workspaceId: Long): WorkspaceMemberListResponse {
         return WorkspaceMemberListResponse(workspaceService.getAllWorkspaceMember(workspaceId))
     }
