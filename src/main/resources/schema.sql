@@ -6,9 +6,11 @@ create table folder
     updated_at       datetime     not null,
     deleted_at       datetime,
     parent_folder_id bigint,
-    writer_id        bigint       not null
+    writer_id        bigint       not null,
+    workspace_id     bigint       not null
 );
 
+create index folder_workspace_fk on folder (workspace_id);
 create index created_at_index on folder (created_at);
 create index parent_folder_id_index on folder (parent_folder_id);
 
@@ -20,7 +22,7 @@ create table post
     status     varchar(100) not null
 );
 
-CREATE INDEX FOLDER_FK ON folder_post (folder_id);
+CREATE INDEX post_folder_fk ON post (folder_id);
 
 create table post_data
 (
